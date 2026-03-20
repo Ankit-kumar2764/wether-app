@@ -79,6 +79,14 @@ function App() {
             <p>{weather.weather[0].description}</p>
             <p>💧 Humidity: {weather.main.humidity}%</p>
             <p>🌬️ Wind: {weather.wind.speed} m/s</p>
+            <p>🤗 Feels Like: {weather.main.feels_like} °C</p>
+
+            <p>🔻 Min Temp: {weather.main.temp_min} °C</p>
+            <p>🔺 Max Temp: {weather.main.temp_max} °C</p>
+             <p>📊 Pressure: {weather.main.pressure} hPa</p>
+
+            <p>🌥️ Condition: {weather.weather[0].description}</p>
+
 
           </div>
         )}
