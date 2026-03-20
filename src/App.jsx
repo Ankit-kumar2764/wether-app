@@ -1,104 +1,85 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
   const [city, setCity] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
   const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const API_KEY = "9e6f0d2ff542c1291fb1fdc1059b0420";
 
-  // Load last searched city
-  useEffect(() => {
-    const savedCity = localStorage.getItem("city");
-    if (savedCity) {
-      setCity(savedCity);
-      getWeather(savedCity);
-    }
-  }, []);
+  // 🔍 Fetch city suggestions
+  const getSuggestions = async (value) => {
+    setCity(value);
 
-  const getWeather = async (searchCity = city) => {
-    if (!searchCity) return;
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=${API_KEY}&units=metric`
-      );
-
-      if (!res.ok) throw new Error("City not found");
-
-      const data = await res.json();
-      setWeather(data);
-
-      // Save city
-      localStorage.setItem("city", searchCity);
-    } catch (err) {
-      setError(err.message);
-      setWeather(null);
+    if (value.length < 2) {
+      setSuggestions([]);
+      return;
     }
 
-    setLoading(false);
+    const res = await fetch(
+      `https://api.openweathermap.org/geo/1.0/direct?q=${value}&limit=5&appid=${API_KEY}`
+    );
+
+    const data = await res.json();
+    setSuggestions(data);
   };
 
-  // Dynamic icon
-  const getIcon = () => {
-    if (!weather) return "🌤️";
-    const main = weather.weather[0].main.toLowerCase();
+  // 🌦️ Fetch weather
+  const getWeather = async (selectedCity) => {
+    const cityName = selectedCity || city;
 
-    if (main.includes("cloud")) return "☁️";
-    if (main.includes("rain")) return "🌧️";
-    if (main.includes("clear")) return "☀️";
-    if (main.includes("snow")) return "❄️";
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=metric`
+    );
 
-    return "🌤️";
-  };
+    const data = await res.json();
+    setWeather(data);
 
-  // Dynamic background
-  const getBackground = () => {
-    if (!weather) return "default";
-
-    const main = weather.weather[0].main.toLowerCase();
-
-    if (main.includes("clear")) return "sunny";
-    if (main.includes("rain")) return "rainy";
-    if (main.includes("cloud")) return "cloudy";
-
-    return "default";
+    setSuggestions([]); // hide suggestions
   };
 
   return (
-    <div className={`app ${getBackground()}`}>
+    <div className="app">
       <div className="card">
         <h1>🌦️ Weather App</h1>
 
-        <div className="search">
+        <div className="search-box">
           <input
             type="text"
-            placeholder="Enter city..."
+            placeholder="Search city..."
             value={city}
-            onChange={(e) => setCity(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") getWeather();
-            }}
+            onChange={(e) => getSuggestions(e.target.value)}
           />
+
           <button onClick={() => getWeather()}>Search</button>
         </div>
 
-        {loading && <div className="loader"></div>}
-        {error && <p className="error">{error}</p>}
+        {/* 🔥 Suggestions Dropdown */}
+        {suggestions.length > 0 && (
+          <ul className="suggestions">
+            {suggestions.map((item, index) => (
+              <li
+                key={index}
+                onClick={() =>
+                  getWeather(`${item.name},${item.country}`)
+                }
+              >
+                {item.name}, {item.country}
+              </li>
+            ))}
+          </ul>
+        )}
 
-        {weather && !loading && (
+        {/* 🌤️ Weather Data */}
+        {weather && weather.main && (
           <div className="weather">
             <h2>{weather.name}</h2>
-            <h1>{getIcon()}</h1>
             <p>🌡️ {weather.main.temp} °C</p>
             <p>{weather.weather[0].description}</p>
             <p>💧 Humidity: {weather.main.humidity}%</p>
             <p>🌬️ Wind: {weather.wind.speed} m/s</p>
+
           </div>
         )}
       </div>
