@@ -1,0 +1,91 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Backgrounds */
+.app {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s;
+}
+
+.default {
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+}
+
+.sunny {
+  background: linear-gradient(to right, #fceabb, #f8b500);
+}
+
+.rainy {
+  background: linear-gradient(to right, #4b6cb7, #182848);
+}
+
+.cloudy {
+  background: linear-gradient(to right, #bdc3c7, #2c3e50);
+}
+
+/* Card */
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Search */
+.search {
+  margin: 15px 0;
+}
+
+.search input {
+  padding: 10px;
+  width: 65%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search button {
+  padding: 10px;
+  margin-left: 5px;
+  border: none;
+  background: #0077b6;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search button:hover {
+  background: #023e8a;
+}
+
+/* Weather */
+.weather {
+  margin-top: 20px;
+}
+
+/* Loader */
+.loader {
+  margin: 20px auto;
+  border: 5px solid #ccc;
+  border-top: 5px solid #0077b6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  color: red;
+}
